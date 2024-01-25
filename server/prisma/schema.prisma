@@ -1,0 +1,20 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Candidate {
+  id      String   @id @default(uuid())
+  name    String
+  skills  Skill[]
+}
+
+model Skill {
+  id        String   @id @default(uuid())
+  name      String
+  candidates Candidate[]
+}
