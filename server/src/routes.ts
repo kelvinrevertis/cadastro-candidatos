@@ -1,16 +1,18 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { z } from "zod";
 
 const router = Router();
 const prisma = new PrismaClient();
 
+const candidateSchema = z.object({
+  name: z.string().min(1),
+  skills: z.array(z.string()).min(1),
+});
+
 router.post("/candidates", async (request: Request, response: Response) => {
   try {
-    const { name, skills } = request.body;
-
-    if(name.length === 0 || skills.length===0){
-      return response.status(400).json({ error: "Solicitação inválida - parâmetro de nomes e habilidades são necessários" });
-    }
+    const { name, skills } = candidateSchema.parse(request.body);
 
     const createCandidate = await prisma.candidate.create({
       data: {
@@ -28,6 +30,9 @@ router.post("/candidates", async (request: Request, response: Response) => {
 
     response.status(201).json(createCandidate);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return response.status(400).json({ error: "Solicitação inválida - parâmetro de nomes e habilidades são necessários", details: error.errors });
+    }
     console.error("Erro ao criar candidatos:", error);
     response.status(500).json({ error: "Erro do Servidor Interno" });
   }
@@ -79,10 +84,17 @@ router.get("/candidates/search", async (request: Request, response: Response) =>
 
     const bestCandidate = candidatesWithSkills.reduce((prev, current) => {
       const currentSkills = current.skills.map((skill) => skill.name.toLowerCase());
-      const coverage = skillsArray.filter((skill) => currentSkills.includes(skill)).length;
+      const commonSkillsCount = skillsArray.filter(skill => currentSkills.includes(skill)).length;
+      const totalSkillsCount = currentSkills.length;
 
-      return coverage > prev.coverage ? { candidate: current, coverage } : prev;
-    }, { candidate: null, coverage: 0 });
+      if (commonSkillsCount === skillsArray.length) {
+        if (totalSkillsCount > prev.totalSkills) {
+          return { candidate: current, totalSkills: totalSkillsCount };
+        }
+      }
+
+      return prev;
+    }, { candidate: null, totalSkills: 0 });
 
     if (bestCandidate.candidate) {
       const formattedResponse = {
