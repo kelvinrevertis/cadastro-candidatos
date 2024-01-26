@@ -1,14 +1,44 @@
 version: '3'
 
 services:
-  web:
-    build: web
+
+  mysql:
+    image: mysql:8.0
     ports:
-      - "3000:3000"
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=candidates_db
+      - MYSQL_ROOT_PASSWORD=pass
     restart: always
+    networks:
+      - candidates-networks
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 3s
+      retries: 5
 
   server:
     build: server
     ports:
       - "4200:4200"
+    command: bash -c "npm install && npx prisma generate && npx prisma migrate dev && npm run dev"
     restart: always
+    networks:
+      - candidates-networks
+    depends_on:
+      - mysql
+
+  web:
+    build: web
+    ports:
+      - "3000:3000"
+    restart: always
+    networks:
+      - candidates-networks
+    depends_on:
+      - server
+
+networks:
+  candidates-networks:
+    driver: bridge
+
