@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import NavButton from "@/components/NavButton";
 import api from "@/services/axios";
 import toast from "react-hot-toast";
+import NavButton from "@/components/NavButton";
+import AddSkillButton from "@/components/PlusButton";
 
 const Register = () => {
   const [nome, setNome] = useState<string>("");
@@ -59,11 +60,7 @@ const Register = () => {
                 Habilidade:
                 <input type="text" value={skill} onChange={(e) => handleSkillChange(index, e.target.value)} className="border border-gray-300 p-2 rounded ml-2" required />
               </label>
-              {index === skills.length - 1 && (
-                <button onClick={handleAddSkill} className="bg-pink text-white p-2 rounded ml-2">
-                  +
-                </button>
-              )}
+              {index === skills.length - 1 && <AddSkillButton onClick={handleAddSkill} className="bg-pink text-white p-2 rounded ml-2" />}
             </div>
           ))}
         </div>

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import NavButton from "@/components/NavButton";
+import AddSkillButton from "@/components/PlusButton";
 import api from "@/services/axios";
 
 const Search = () => {
@@ -27,7 +28,7 @@ const Search = () => {
       const data = await response.data;
       setSearchResults(data);
       setShowResults(true);
-    } catch(error) {
+    } catch (error) {
       console.error("Erro ao buscar candidatos:", error);
       setShowResults(true);
       setSearchResults(null);
@@ -43,13 +44,8 @@ const Search = () => {
           Habilidades:
           {skills.map((skill, index) => (
             <div key={index} className="flex items-center mb-2">
-              <input type="text" value={skill} onChange={(e) => handleSkillChange(index, e.target.value)}
-              className="border border-gray-300 p-2 rounded mr-2" />
-              {index === skills.length - 1 && (
-                <button onClick={handleAddSkill} className="bg-pink text-white p-2 rounded">
-                  +
-                </button>
-              )}
+              <input type="text" value={skill} onChange={(e) => handleSkillChange(index, e.target.value)} className="border border-gray-300 p-2 rounded mr-2" />
+              {index === skills.length - 1 && <AddSkillButton onClick={handleAddSkill} className="bg-pink text-white p-2 rounded" />}
             </div>
           ))}
         </label>
