@@ -26,7 +26,7 @@ Front-end:
 
 -  Para facilitar a execução da aplicação utilize o [Docker](https://www.docker.com/).
 
-- Com o ambiente [Docker](https://www.docker.com/) sendo executado use o comando "docker-compose up -d".
+- Com o ambiente [Docker](https://www.docker.com/) sendo executado use o comando "docker-compose up -d" no terminal.
 
- - Agora a aplicação ja esta pronta para ser executada, abra em seu navegador http://localhost:3000/.
+- Agora a aplicação ja esta pronta para ser executada, abra em seu navegador http://localhost:3000/.
 
