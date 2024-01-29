@@ -21,6 +21,7 @@ Front-end:
 - React
 - Tailwind
 - Axios
+- React-hot-toast
 
 # Como executar a aplicação
 
